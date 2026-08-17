@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>运维自动化脚本工具箱：8 个高频场景脚本 · redmi的运维笔记</title>
+  <meta name="description" content="日志轮转、数据备份、健康检查等 8 个运维高频场景脚本的实践与设计思路。" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2322d3ee'/><text x='50' y='68' font-size='52' text-anchor='middle'>🖥️</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><span class="logo-dot"></span>redmi的运维笔记</a>
+      <nav>
+        <a href="index.html">首页</a>
+        <a href="projects.html">项目</a>
+        <a href="blog.html">博客</a>
+        <a href="about.html">关于</a>
+        <a href="https://github.com/sakura44u" class="gh" target="_blank" rel="noopener">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container article">
+    <div class="art-head">
+      <a href="blog.html" class="back">← 返回文章列表</a>
+      <h1>运维自动化脚本工具箱：8 个高频场景脚本</h1>
+      <div class="meta">2026-08-13 · redmi · 项目：<a href="https://github.com/sakura44u/ops-toolkit" target="_blank" rel="noopener">OpsToolkit</a></div>
+    </div>
+
+    <div class="prose">
+      <p>
+        运维工作中，很多重复劳动都值得用脚本自动化。我把最常遇到的场景整理成了一个工具箱
+        <a href="https://github.com/sakura44u/ops-toolkit" target="_blank" rel="noopener">OpsToolkit</a>，
+        全部基于 <strong>Python 标准库 / Shell</strong> 实现，拷到服务器上就能跑，不用装任何依赖。
+      </p>
+
+      <h2>脚本清单与使用场景</h2>
+      <table>
+        <thead><tr><th>脚本</th><th>解决的痛点</th></tr></thead>
+        <tbody>
+          <tr><td><code>log_rotate.py</code></td><td>日志文件无限增长撑爆磁盘</td></tr>
+          <tr><td><code>backup.py</code></td><td>数据没有定期备份、误删无法恢复</td></tr>
+          <tr><td><code>health_check.py</code></td><td>批量探活多台服务的端口 / HTTP 状态</td></tr>
+          <tr><td><code>disk_cleanup.py</code></td><td>临时文件堆积、找不到大文件占空间</td></tr>
+          <tr><td><code>process_guard.py</code></td><td>服务进程崩溃后无人拉起</td></tr>
+          <tr><td><code>deploy.py</code></td><td>每次发版手动 git pull + 重启容易出错</td></tr>
+          <tr><td><code>batch_ssh.sh</code></td><td>逐台登录多台主机执行命令太慢</td></tr>
+          <tr><td><code>check_disk_space.sh</code></td><td>磁盘快满了却不知道，直到服务挂掉</td></tr>
+        </tbody>
+      </table>
+
+      <h2>设计要点</h2>
+      <h3>1. 每个脚本只做一件事</h3>
+      <p>遵循 Unix 哲学，脚本通过 <code>argparse</code> 参数化，而不是写死路径。这样可以用管道、cron、systemd timer 任意组合。</p>
+
+      <h3>2. 幂等与安全</h3>
+      <p>轮转、清理这类「删文件」的操作，都带 <code>--dry-run</code> 预演模式，先看清楚要删什么再真正执行：</p>
+      <pre><code>python3 log_rotate.py --dir /var/log/myapp --max-size 50 --keep 7 --dry-run</code></pre>
+
+      <h3>3. 可观测</h3>
+      <p>所有脚本统一输出到 stdout，带上时间戳和明确的状态标记（<code>[backup]</code>、<code>[del]</code>、<code>[ALERT]</code>），
+      便于重定向到日志文件或接入集中日志平台。</p>
+
+      <h2>一个例子：日志轮转</h2>
+      <p>日志轮转的核心是「移位 + 压缩 + 清理」，本质是维护一个最多 <code>keep</code> 份的环形队列：</p>
+      <pre><code>app.log.3 删除          # 最旧的先删
+app.log.2 → app.log.3   # 从旧到新依次后移
+app.log.1 → app.log.2
+app.log   → app.log.1   # 当前日志归档
+# 最后 gzip 压缩 app.log.1，并 touch 一个空 app.log 供程序继续写</code></pre>
+
+      <h2>小结</h2>
+      <p>
+        把高频操作脚本化，是运维「自动化」的第一步。这些脚本也可以作为面试时的谈资——
+        展示你如何用工程化的方式解决重复劳动，而不是「每次手动敲命令」。
+      </p>
+      <blockquote>完整代码见 <a href="https://github.com/sakura44u/ops-toolkit" target="_blank" rel="noopener">github.com/sakura44u/ops-toolkit</a>。</blockquote>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="copy">© <span class="year">2026</span> <span class="mono">redmi</span> · 用 ❤️ 与代码构建</div>
+      <div class="copy">Powered by <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a></div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

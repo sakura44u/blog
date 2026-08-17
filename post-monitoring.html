@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>从零搭建一个系统监控与告警平台 · redmi的运维笔记</title>
+  <meta name="description" content="用 Python + FastAPI + psutil 从零实现指标采集、Web 仪表盘与阈值告警。" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2322d3ee'/><text x='50' y='68' font-size='52' text-anchor='middle'>🖥️</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><span class="logo-dot"></span>redmi的运维笔记</a>
+      <nav>
+        <a href="index.html">首页</a>
+        <a href="projects.html">项目</a>
+        <a href="blog.html">博客</a>
+        <a href="about.html">关于</a>
+        <a href="https://github.com/sakura44u" class="gh" target="_blank" rel="noopener">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container article">
+    <div class="art-head">
+      <a href="blog.html" class="back">← 返回文章列表</a>
+      <h1>从零搭建一个系统监控与告警平台</h1>
+      <div class="meta">2026-08-10 · redmi · 项目：<a href="https://github.com/sakura44u/ops-monitor" target="_blank" rel="noopener">OpsMonitor</a></div>
+    </div>
+
+    <div class="prose">
+      <p>
+        对一名运维工程师来说，<strong>监控与告警</strong>是最核心的能力之一。与其直接上手 Prometheus + Grafana 这样的重型方案，
+        不如先用几百行代码自己实现一个轻量监控系统，把原理吃透。这篇文章记录我用
+        <strong>Python + FastAPI + psutil</strong> 从零搭建 OpsMonitor 的过程。
+      </p>
+
+      <h2>整体架构</h2>
+      <p>系统分三层，职责清晰：</p>
+      <pre><code>采集层 collector.py  ──►  存储层 storage.py  ──►  展示层 api.py + web/
+        │                        │
+        └── psutil 周期采集        └── SQLite 持久化 + 阈值检测(alerter.py)</code></pre>
+
+      <h2>1. 指标采集：psutil</h2>
+      <p><code>psutil</code> 是一个跨平台的系统监控库，几行代码就能拿到 CPU、内存、磁盘、网络等信息：</p>
+      <pre><code>import psutil
+
+cpu = psutil.cpu_percent(interval=0.5)      # CPU 使用率
+mem = psutil.virtual_memory()               # 内存：.percent .used .total
+disk = {p.mountpoint: psutil.disk_usage(p.mountpoint).percent
+        for p in psutil.disk_partitions()}  # 各分区磁盘使用率
+net = psutil.net_io_counters()              # 网络收发字节数</code></pre>
+      <p>采集逻辑放在一个后台线程里，用 <code>threading.Event</code> 控制周期，异常不会中断主进程。</p>
+
+      <h2>2. 存储：SQLite</h2>
+      <p>指标数据用 SQLite 落地（Python 标准库自带，无需额外部署）。关键点是<strong>幂等写入 + 定期清理</strong>：</p>
+      <pre><code>INSERT OR REPLACE INTO metrics VALUES(...)   -- 以时间戳为主键，重复采集不产生脏数据
+DELETE FROM metrics WHERE ts &lt; ?             -- 每次写入顺带清理超过保留时长的旧数据</code></pre>
+
+      <h2>3. 告警：阈值检测 + 冷却去重</h2>
+      <p>告警最怕「刷屏」——同一个问题每 5 秒发一条，几百条消息瞬间淹没群。解决思路是<strong>冷却去重</strong>：</p>
+      <pre><code># 同一告警消息在 cooldown 秒内只发一次
+if message in self._last_alert and now - self._last_alert[message] &lt; cooldown:
+    return
+self._last_alert[message] = now</code></pre>
+      <p>通知渠道做了两层抽象：SMTP 邮件 + 通用 Webhook（钉钉 / 企业微信 / 飞书机器人都兼容）。</p>
+
+      <h2>4. 展示：FastAPI + Chart.js</h2>
+      <p>FastAPI 同时提供 REST API 和静态仪表盘，前端每 5 秒拉一次数据渲染趋势图：</p>
+      <pre><code>GET /api/health                 # 健康检查
+GET /api/metrics/current        # 最新指标
+GET /api/metrics/history?limit  # 历史趋势
+GET /api/alerts                 # 告警记录</code></pre>
+
+      <h2>小结</h2>
+      <p>
+        这套系统虽然轻量，但完整覆盖了监控的「采集 → 存储 → 告警 → 展示」闭环。理解了它，再去学 Prometheus 的
+        exporter / 时序库 / alertmanager 就顺理成章了。
+      </p>
+      <blockquote>完整代码见 <a href="https://github.com/sakura44u/ops-monitor" target="_blank" rel="noopener">github.com/sakura44u/ops-monitor</a>。</blockquote>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="copy">© <span class="year">2026</span> <span class="mono">redmi</span> · 用 ❤️ 与代码构建</div>
+      <div class="copy">Powered by <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a></div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

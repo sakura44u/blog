@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>项目 · redmi的运维笔记</title>
+  <meta name="description" content="redmi 的开源运维项目：系统监控告警、自动化脚本工具箱、CI/CD 部署。" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2322d3ee'/><text x='50' y='68' font-size='52' text-anchor='middle'>🖥️</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><span class="logo-dot"></span>redmi的运维笔记</a>
+      <nav>
+        <a href="index.html">首页</a>
+        <a href="projects.html">项目</a>
+        <a href="blog.html">博客</a>
+        <a href="about.html">关于</a>
+        <a href="https://github.com/sakura44u" class="gh" target="_blank" rel="noopener">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <div class="section-head">
+        <h2>开源项目</h2>
+        <span class="line"></span>
+      </div>
+      <p style="color: var(--muted); margin-bottom: 28px; max-width: 760px;">
+        以下是围绕 <strong style="color: var(--text);">IT 运维 / DevOps</strong> 方向沉淀的开源项目，
+        每个项目都有完整的 README、可运行代码与设计思路说明，可直接作为面试作品展示。
+      </p>
+      <div class="grid" id="projects-grid"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>项目与岗位的对应关系</h2>
+        <span class="line"></span>
+      </div>
+      <div class="card">
+        <div class="article prose" style="max-width: none;">
+          <table>
+            <thead>
+              <tr><th>岗位要求</th><th>对应项目</th><th>体现能力</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>监控预警、故障排查</td><td>OpsMonitor</td><td>指标采集、阈值告警、可视化</td></tr>
+              <tr><td>运维自动化工具的应用与优化</td><td>OpsToolkit</td><td>脚本化、参数化、cron 调度</td></tr>
+              <tr><td>系统部署、配置管理</td><td>DevOps-CICD</td><td>Docker、Nginx、CI/CD 流水线</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="copy">© <span class="year">2026</span> <span class="mono">redmi</span> · 用 ❤️ 与代码构建</div>
+      <div class="copy">Powered by <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a></div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>redmi的运维笔记 · 首页</title>
+  <meta name="description" content="redmi 的个人技术博客，专注系统运维、监控告警与自动化部署。" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2322d3ee'/><text x='50' y='68' font-size='52' text-anchor='middle'>🖥️</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo"><span class="logo-dot"></span>redmi的运维笔记</a>
+      <nav>
+        <a href="index.html">首页</a>
+        <a href="projects.html">项目</a>
+        <a href="blog.html">博客</a>
+        <a href="about.html">关于</a>
+        <a href="https://github.com/sakura44u" class="gh" target="_blank" rel="noopener">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hello">$ whoami</div>
+      <h1>你好，我是 <span class="grad">redmi</span> 👋</h1>
+      <p class="sub">IT 运维 / DevOps 方向应届生。专注系统运维、监控告警与自动化部署，用代码把重复的运维工作自动化。</p>
+      <div class="tags">
+        <span class="chip">Linux</span><span class="chip">Docker</span><span class="chip">Python</span>
+        <span class="chip">Shell</span><span class="chip">CI/CD</span><span class="chip">监控告警</span>
+        <span class="chip">Nginx</span><span class="chip">Git</span>
+      </div>
+      <div class="btn-row">
+        <a href="projects.html" class="btn btn-primary">🚀 查看项目</a>
+        <a href="https://github.com/sakura44u" class="btn btn-ghost" target="_blank" rel="noopener">GitHub 主页</a>
+        <a href="blog.html" class="btn btn-ghost">📝 博客</a>
+      </div>
+    </section>
+
+    <!-- 精选项目 -->
+    <section>
+      <div class="section-head">
+        <h2>精选项目</h2>
+        <span class="line"></span>
+        <a href="projects.html" class="more">全部项目 →</a>
+      </div>
+      <div class="grid" id="projects-grid"></div>
+    </section>
+
+    <!-- 最新文章 -->
+    <section>
+      <div class="section-head">
+        <h2>最新文章</h2>
+        <span class="line"></span>
+        <a href="blog.html" class="more">全部文章 →</a>
+      </div>
+      <div class="post-item">
+        <span class="date">2026-08-16</span>
+        <div class="body">
+          <h3><a href="post-cicd.html">Docker 多阶段构建 + GitHub Actions 实现自动化部署</a></h3>
+          <p>从 Dockerfile 到流水线：一个完整的「代码 → 测试 → 镜像 → 部署」自动化链路。</p>
+        </div>
+      </div>
+      <div class="post-item">
+        <span class="date">2026-08-13</span>
+        <div class="body">
+          <h3><a href="post-automation.html">运维自动化脚本工具箱：8 个高频场景脚本</a></h3>
+          <p>日志轮转、数据备份、健康检查……每个运维新人都该有的脚本合集。</p>
+        </div>
+      </div>
+      <div class="post-item">
+        <span class="date">2026-08-10</span>
+        <div class="body">
+          <h3><a href="post-monitoring.html">从零搭建一个系统监控与告警平台</a></h3>
+          <p>用 Python + FastAPI + psutil，几百行代码实现指标采集、仪表盘与阈值告警。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="copy">© <span class="year">2026</span> <span class="mono">redmi</span> · 用 ❤️ 与代码构建</div>
+      <div class="copy">Powered by <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a></div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
