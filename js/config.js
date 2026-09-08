@@ -1,7 +1,7 @@
 // 站点配置：改这里即可全局更新名字 / GitHub / 项目链接
 window.SITE = {
-  name: "redmi",
-  title: "redmi的运维笔记",
+  name: "冯",
+  title: "冯的运维博客",
   github: "sakura44u",
   githubUrl: "https://github.com/sakura44u",
   email: "", // 可填写你的邮箱，留空则不显示
